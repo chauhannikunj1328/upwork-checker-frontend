@@ -282,7 +282,9 @@ function ProposalChecker() {
             <div className="space-y-1.5">
               <Label htmlFor="c-cover_letter">Your cover letter <span className="text-destructive">*</span></Label>
               <Textarea id="c-cover_letter" rows={8} placeholder="Paste your cover letter here…" {...register("cover_letter")} />
-              <p className="text-xs text-muted-foreground text-right">{wordCount(coverLetterValue ?? "")} words</p>
+              <p className={`text-xs text-right ${wordCount(coverLetterValue ?? "") > 5000 ? "text-destructive" : "text-muted-foreground"}`}>
+                {wordCount(coverLetterValue ?? "")} / 5000 words
+              </p>
               {errors.cover_letter && <p className="text-xs text-destructive">{errors.cover_letter.message}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
