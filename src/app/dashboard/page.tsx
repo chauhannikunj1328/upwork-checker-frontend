@@ -388,7 +388,7 @@ function ProposalGenerator() {
                 <p className="text-xs text-muted-foreground">{result.word_count} words</p>
                 <CopyButton text={result.cover_letter} />
               </div>
-              <ScrollArea className="h-[calc(100vh-14rem)] rounded-md border bg-muted/40 p-4">
+              <ScrollArea className="h-[calc(100vh-12rem)] rounded-md border bg-muted/40 p-4">
                 <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">
                   {result.cover_letter}
                 </pre>
