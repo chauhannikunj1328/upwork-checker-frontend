@@ -349,12 +349,11 @@ function ProposalGenerator() {
       {/* Column 1 — job post input */}
       <Card className="xl:sticky xl:top-20 h-fit">
         <CardHeader>
-          <CardTitle className="text-base">Generate a cover letter</CardTitle>
+          <CardTitle className="text-base">Job post</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="g-job_post">Job post <span className="text-destructive">*</span></Label>
               <Textarea
                 id="g-job_post"
                 rows={14}
