@@ -204,7 +204,7 @@ function ScorePanel({ result }: { result: ScoreResult }) {
             <div className="space-y-2">
               {result.critique.map((item, i) => (
                 <div key={i} className="rounded-lg border bg-muted/40 p-3 text-sm space-y-1">
-                  <p className="italic text-muted-foreground">"{item.line}"</p>
+                  <p className="italic text-muted-foreground">&quot;{item.line}&quot;</p>
                   <p><span className="font-medium text-destructive">Issue:</span> {item.issue}</p>
                   <p><span className="font-medium text-green-600">Fix:</span> {item.fix}</p>
                 </div>
