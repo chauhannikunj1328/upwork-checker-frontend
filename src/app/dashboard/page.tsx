@@ -430,7 +430,7 @@ export default function DashboardPage() {
         {/* Nav links — centre */}
         <TabsList className="hidden sm:flex">
           <TabsTrigger value="checker">Proposal Checker</TabsTrigger>
-          <TabsTrigger value="generator">Proposal Generator</TabsTrigger>
+          <TabsTrigger value="generator">Cover Letter Generator</TabsTrigger>
         </TabsList>
 
         {/* User + logout */}
