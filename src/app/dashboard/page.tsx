@@ -78,13 +78,15 @@ const SUB_SCORE_LABELS: Record<keyof ScoreResult["sub_scores"], string> = {
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 function scoreBadgeVariant(score: number): "default" | "secondary" | "destructive" {
-  if (score >= 8.5) return "default";
+  if (score >= 9.0) return "default";
+  if (score >= 8.0) return "default";
   if (score >= 6.5) return "secondary";
   return "destructive";
 }
 
 function scoreBadgeClass(score: number): string {
-  if (score >= 8.5) return "bg-green-500 hover:bg-green-500 text-white";
+  if (score >= 9.0) return "bg-blue-600 hover:bg-blue-600 text-white";
+  if (score >= 8.0) return "bg-green-500 hover:bg-green-500 text-white";
   if (score >= 6.5) return "bg-yellow-500 hover:bg-yellow-500 text-white";
   return "";
 }
@@ -159,7 +161,7 @@ function ScorePanel({ result }: { result: ScoreResult }) {
           className={scoreBadgeClass(result.overall_score)}
           variant={scoreBadgeVariant(result.overall_score)}
         >
-          {result.overall_score >= 8.5 ? "Excellent" : result.overall_score >= 6.5 ? "Good" : "Needs Work"}
+          {result.overall_score >= 9.0 ? "Outstanding" : result.overall_score >= 8.0 ? "Excellent" : result.overall_score >= 6.5 ? "Good" : "Needs Work"}
         </Badge>
       </div>
 
