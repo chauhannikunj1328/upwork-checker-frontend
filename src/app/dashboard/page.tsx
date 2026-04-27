@@ -423,33 +423,44 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Top bar */}
-      <header className="sticky top-0 z-10 bg-white border-b px-4 sm:px-6 h-14 flex items-center justify-between">
-        <span className="font-semibold text-sm sm:text-base">Upwork Proposal Checker</span>
+    <Tabs defaultValue="checker" className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Header with nav */}
+      <header className="sticky top-0 z-10 bg-white border-b px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        {/* Logo */}
+        <span className="font-semibold text-sm sm:text-base whitespace-nowrap">
+          Upwork Proposal Checker
+        </span>
+
+        {/* Nav links — centre */}
+        <TabsList className="hidden sm:flex">
+          <TabsTrigger value="checker">Proposal Checker</TabsTrigger>
+          <TabsTrigger value="generator">Proposal Generator</TabsTrigger>
+        </TabsList>
+
+        {/* User + logout */}
         <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground hidden sm:block">{user.name}</span>
+          <span className="text-sm text-muted-foreground hidden md:block">{user.name}</span>
           <Button variant="outline" size="sm" onClick={handleLogout}>Logout</Button>
         </div>
       </header>
 
-      {/* Tabs + content */}
+      {/* Mobile nav (shown below header on small screens) */}
+      <div className="sm:hidden border-b bg-white px-4 py-2">
+        <TabsList className="w-full">
+          <TabsTrigger value="checker" className="flex-1">Checker</TabsTrigger>
+          <TabsTrigger value="generator" className="flex-1">Generator</TabsTrigger>
+        </TabsList>
+      </div>
+
+      {/* Content */}
       <main className="flex-1 p-4 sm:p-6 max-w-screen-2xl mx-auto w-full">
-        <Tabs defaultValue="checker">
-          <TabsList className="mb-6">
-            <TabsTrigger value="checker">Proposal Checker</TabsTrigger>
-            <TabsTrigger value="generator">Proposal Generator</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="checker">
-            <ProposalChecker />
-          </TabsContent>
-
-          <TabsContent value="generator">
-            <ProposalGenerator />
-          </TabsContent>
-        </Tabs>
+        <TabsContent value="checker" className="mt-0">
+          <ProposalChecker />
+        </TabsContent>
+        <TabsContent value="generator" className="mt-0">
+          <ProposalGenerator />
+        </TabsContent>
       </main>
-    </div>
+    </Tabs>
   );
 }
