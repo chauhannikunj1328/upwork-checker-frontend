@@ -44,9 +44,16 @@ export default function SignupPage() {
       await signup(values.name, values.email, values.password);
       router.replace("/dashboard");
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { detail?: string } } })?.response?.data
-          ?.detail ?? "Could not create account";
+      const axiosErr = err as { response?: { data?: { detail?: string }; status?: number }; code?: string; message?: string };
+      let message = "Could not create account";
+      if (axiosErr?.code === "ERR_NETWORK" || axiosErr?.code === "ECONNREFUSED") {
+        message = "Cannot reach server — make sure the backend is running on port 8000";
+      } else if (axiosErr?.response?.data?.detail) {
+        message = axiosErr.response.data.detail;
+      } else if (axiosErr?.message) {
+        message = axiosErr.message;
+      }
+      console.error("Signup error:", err);
       toast.error(message);
     }
   }
