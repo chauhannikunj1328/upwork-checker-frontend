@@ -427,7 +427,7 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-10 bg-white border-b px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
         <span className="font-semibold text-sm sm:text-base whitespace-nowrap">
-          Upwork Proposal Checker
+          Upwork Proposals
         </span>
 
         {/* Nav links — centre */}
