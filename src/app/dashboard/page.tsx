@@ -29,7 +29,6 @@ interface ScoreResult {
   sub_scores: {
     hook_strength: number;
     personalization: number;
-    portfolio_proof: number;
     clarity_grammar: number;
     length_readability: number;
     call_to_action: number;
@@ -71,7 +70,6 @@ type GeneratorForm = z.infer<typeof generatorSchema>;
 const SUB_SCORE_LABELS: Record<keyof ScoreResult["sub_scores"], string> = {
   hook_strength: "Hook Strength",
   personalization: "Personalization",
-  portfolio_proof: "Portfolio Proof",
   clarity_grammar: "Clarity & Grammar",
   length_readability: "Length & Readability",
   call_to_action: "Call to Action",
