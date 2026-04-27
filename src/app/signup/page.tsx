@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 
 import { signup } from "@/lib/auth";
+import { BASE_URL } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,7 +48,7 @@ export default function SignupPage() {
       const axiosErr = err as { response?: { data?: { detail?: string }; status?: number }; code?: string; message?: string };
       let message = "Could not create account";
       if (axiosErr?.code === "ERR_NETWORK" || axiosErr?.code === "ECONNREFUSED") {
-        message = "Cannot reach server — make sure the backend is running on port 8000";
+        message = `Cannot reach server (${axiosErr?.code}) — ${BASE_URL}`;
       } else if (axiosErr?.response?.data?.detail) {
         message = axiosErr.response.data.detail;
       } else if (axiosErr?.message) {
