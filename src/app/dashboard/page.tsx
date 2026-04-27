@@ -385,9 +385,11 @@ function ProposalGenerator() {
                 <CopyButton text={result.cover_letter} />
               </div>
               <ScrollArea className="h-[calc(100vh-12rem)] rounded-md border bg-muted/40 p-4">
-                <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">
-                  {result.cover_letter}
-                </pre>
+                <div className="text-sm font-sans leading-relaxed space-y-3">
+                  {result.cover_letter.split(/\n{2,}/).map((block, i) => (
+                    <p key={i} className="whitespace-pre-wrap">{block.trim()}</p>
+                  ))}
+                </div>
               </ScrollArea>
             </div>
           ) : (
