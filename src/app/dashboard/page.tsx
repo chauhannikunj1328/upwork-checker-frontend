@@ -285,11 +285,6 @@ function ProposalChecker() {
               <p className="text-xs text-muted-foreground text-right">{wordCount(coverLetterValue ?? "")} words</p>
               {errors.cover_letter && <p className="text-xs text-destructive">{errors.cover_letter.message}</p>}
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="c-portfolio">Your portfolio summary</Label>
-              <Textarea id="c-portfolio" rows={4} placeholder="Brief summary of relevant past work" {...register("portfolio")} />
-              <p className="text-xs text-muted-foreground">Brief summary of relevant past work</p>
-            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Scoring…</> : "Score it"}
             </Button>
