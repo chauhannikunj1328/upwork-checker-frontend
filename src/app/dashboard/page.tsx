@@ -84,31 +84,48 @@ function wordCount(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
-// ── components ────────────────────────────────────────────────────────────────
+// ── skeleton ──────────────────────────────────────────────────────────────────
 
-function ResultSkeleton() {
+function ScoreSkeleton() {
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4">
       <Skeleton className="h-10 w-32" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-3/4" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-5/6" />
-      <Skeleton className="h-24 w-full" />
-      <Skeleton className="h-4 w-2/3" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-3/4" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-5/6" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-4/5" />
     </div>
   );
 }
 
-function EmptyState() {
+function LetterSkeleton() {
   return (
-    <div className="flex items-center justify-center h-full min-h-[300px]">
-      <p className="text-muted-foreground text-sm text-center px-6">
-        Submit a proposal to see your score
-      </p>
+    <div className="space-y-3">
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-5/6" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-4/5" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-3/4" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-5/6" />
     </div>
   );
 }
+
+// ── empty state ───────────────────────────────────────────────────────────────
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="flex items-center justify-center min-h-[260px]">
+      <p className="text-muted-foreground text-sm text-center px-4">{text}</p>
+    </div>
+  );
+}
+
+// ── copy button ───────────────────────────────────────────────────────────────
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -128,17 +145,26 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-function ScoreResult({ result }: { result: ScoreResult }) {
+// ── column 2: score panel ─────────────────────────────────────────────────────
+
+function ScorePanel({ result }: { result: ScoreResult }) {
   return (
-    <div className="space-y-5 p-1">
+    <div className="space-y-5">
       {/* Overall score */}
       <div className="flex items-center gap-3">
         <span className="text-4xl font-bold tabular-nums">
           {result.overall_score.toFixed(1)}
           <span className="text-xl text-muted-foreground font-normal"> / 10</span>
         </span>
-        <Badge className={scoreBadgeClass(result.overall_score)} variant={scoreBadgeVariant(result.overall_score)}>
-          {result.overall_score >= 8.5 ? "Excellent" : result.overall_score >= 6.5 ? "Good" : "Needs Work"}
+        <Badge
+          className={scoreBadgeClass(result.overall_score)}
+          variant={scoreBadgeVariant(result.overall_score)}
+        >
+          {result.overall_score >= 8.5
+            ? "Excellent"
+            : result.overall_score >= 6.5
+            ? "Good"
+            : "Needs Work"}
         </Badge>
       </div>
 
@@ -195,25 +221,28 @@ function ScoreResult({ result }: { result: ScoreResult }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
 
-      {/* Rewritten letter */}
-      <Separator />
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold">Rewritten Letter</h3>
-          <CopyButton text={result.rewritten_letter} />
+// ── column 3: rewritten letter panel ─────────────────────────────────────────
+
+function RewrittenLetterPanel({ result }: { result: ScoreResult }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Original: {result.word_count_original} words · Rewritten: {result.word_count_rewritten} words
+          </p>
         </div>
-        <ScrollArea className="h-48 rounded-md border bg-muted/40 p-3">
-          <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">
-            {result.rewritten_letter}
-          </pre>
-        </ScrollArea>
+        <CopyButton text={result.rewritten_letter} />
       </div>
-
-      {/* Word count */}
-      <p className="text-xs text-muted-foreground">
-        Original: {result.word_count_original} words • Rewritten: {result.word_count_rewritten} words
-      </p>
+      <ScrollArea className="h-[calc(100vh-14rem)] rounded-md border bg-muted/40 p-4">
+        <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">
+          {result.rewritten_letter}
+        </pre>
+      </ScrollArea>
     </div>
   );
 }
@@ -225,14 +254,17 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [result, setResult] = useState<ScoreResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const scoreRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { job_post: "", cover_letter: "", portfolio: "" },
+  });
 
   const coverLetterValue = useWatch({ control, name: "cover_letter", defaultValue: "" });
 
@@ -247,9 +279,8 @@ export default function DashboardPage() {
     try {
       const { data } = await api.post<ScoreResult>("/score", values);
       setResult(data);
-      // scroll to results on mobile
       setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        scoreRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     } catch (err: unknown) {
       const message =
@@ -281,18 +312,20 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Two-column layout */}
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 sm:p-6 max-w-7xl mx-auto w-full">
-        {/* LEFT — form */}
-        <Card>
+      {/* Three-column layout */}
+      <main className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-5 p-4 sm:p-6 max-w-screen-2xl mx-auto w-full">
+
+        {/* COLUMN 1 — inputs */}
+        <Card className="xl:sticky xl:top-20 h-fit">
           <CardHeader>
             <CardTitle className="text-base">Score your proposal</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* Job post */}
               <div className="space-y-1.5">
-                <Label htmlFor="job_post">Job post <span className="text-destructive">*</span></Label>
+                <Label htmlFor="job_post">
+                  Job post <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="job_post"
                   rows={8}
@@ -304,9 +337,10 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              {/* Cover letter */}
               <div className="space-y-1.5">
-                <Label htmlFor="cover_letter">Your cover letter <span className="text-destructive">*</span></Label>
+                <Label htmlFor="cover_letter">
+                  Your cover letter <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="cover_letter"
                   rows={8}
@@ -321,7 +355,6 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              {/* Portfolio */}
               <div className="space-y-1.5">
                 <Label htmlFor="portfolio">Your portfolio summary</Label>
                 <Textarea
@@ -349,21 +382,38 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* RIGHT — results */}
-        <Card ref={resultsRef} className="h-fit lg:sticky lg:top-20">
+        {/* COLUMN 2 — score & critique */}
+        <Card ref={scoreRef} className="h-fit xl:sticky xl:top-20">
           <CardHeader>
-            <CardTitle className="text-base">Results</CardTitle>
+            <CardTitle className="text-base">Score</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <ResultSkeleton />
+              <ScoreSkeleton />
             ) : result ? (
-              <ScoreResult result={result} />
+              <ScorePanel result={result} />
             ) : (
-              <EmptyState />
+              <EmptyState text="Submit a proposal to see your score" />
             )}
           </CardContent>
         </Card>
+
+        {/* COLUMN 3 — rewritten letter */}
+        <Card className="h-fit xl:sticky xl:top-20">
+          <CardHeader>
+            <CardTitle className="text-base">Rewritten Letter</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <LetterSkeleton />
+            ) : result ? (
+              <RewrittenLetterPanel result={result} />
+            ) : (
+              <EmptyState text="Your AI-rewritten letter will appear here" />
+            )}
+          </CardContent>
+        </Card>
+
       </main>
     </div>
   );
