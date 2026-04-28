@@ -229,9 +229,11 @@ function RewrittenLetterPanel({ result }: { result: ScoreResult }) {
         <CopyButton text={result.rewritten_letter} />
       </div>
       <ScrollArea className="h-[calc(100vh-14rem)] rounded-md border bg-muted/40 p-4">
-        <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed">
-          {result.rewritten_letter}
-        </pre>
+        <div className="text-sm font-sans leading-relaxed space-y-3">
+          {result.rewritten_letter.split(/\n{2,}/).map((block, i) => (
+            <p key={i} className="whitespace-pre-wrap">{block.trim()}</p>
+          ))}
+        </div>
       </ScrollArea>
     </div>
   );
