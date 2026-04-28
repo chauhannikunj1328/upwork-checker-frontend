@@ -273,7 +273,7 @@ function ProposalChecker() {
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
       {/* Column 1 — inputs */}
       <Card className="xl:sticky xl:top-20 h-fit">
-        <CardHeader><CardTitle className="text-base">Score your proposal</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">Score your cover letter</CardTitle></CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
@@ -300,7 +300,7 @@ function ProposalChecker() {
       <Card ref={scoreRef} className="h-fit xl:sticky xl:top-20">
         <CardHeader><CardTitle className="text-base">Score</CardTitle></CardHeader>
         <CardContent>
-          {loading ? <ScoreSkeleton /> : result ? <ScorePanel result={result} /> : <EmptyState text="Submit a proposal to see your score" />}
+          {loading ? <ScoreSkeleton /> : result ? <ScorePanel result={result} /> : <EmptyState text="Submit a cover letter to see your score" />}
         </CardContent>
       </Card>
 
@@ -433,7 +433,7 @@ export default function DashboardPage() {
 
         {/* Nav links — centre */}
         <TabsList className="hidden sm:flex">
-          <TabsTrigger value="checker">Proposal Checker</TabsTrigger>
+          <TabsTrigger value="checker">Cover Letter Checker</TabsTrigger>
           <TabsTrigger value="generator">Cover Letter Generator</TabsTrigger>
         </TabsList>
 
