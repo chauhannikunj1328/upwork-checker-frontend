@@ -60,7 +60,10 @@ const checkerSchema = z.object({
 
 const generatorSchema = z.object({
   title: z.string().min(3, "Job title must be at least 3 characters"),
-  summary: z.string().min(50, "Job summary must be at least 50 characters"),
+  summary: z
+    .string()
+    .min(50, "Job summary must be at least 50 characters")
+    .max(15000, "Job summary is too long — please trim to under 15,000 characters"),
 });
 
 type CheckerForm = z.infer<typeof checkerSchema>;
@@ -323,10 +326,12 @@ function ProposalGenerator() {
   const [loading, setLoading] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<GeneratorForm>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<GeneratorForm>({
     resolver: zodResolver(generatorSchema),
     defaultValues: { title: "", summary: "" },
   });
+
+  const summaryValue = useWatch({ control, name: "summary", defaultValue: "" });
 
   async function onSubmit(values: GeneratorForm) {
     setLoading(true);
@@ -368,10 +373,13 @@ function ProposalGenerator() {
               <Label htmlFor="g-summary">Job summary <span className="text-destructive">*</span></Label>
               <Textarea
                 id="g-summary"
-                rows={12}
+                rows={18}
                 placeholder="Paste the full job description here…"
                 {...register("summary")}
               />
+              <p className={`text-xs text-right ${wordCount(summaryValue ?? "") > 2000 ? "text-amber-500" : "text-muted-foreground"}`}>
+                {wordCount(summaryValue ?? "")} words
+              </p>
               {errors.summary && <p className="text-xs text-destructive">{errors.summary.message}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
