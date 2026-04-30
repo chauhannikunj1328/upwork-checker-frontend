@@ -59,7 +59,8 @@ const checkerSchema = z.object({
 });
 
 const generatorSchema = z.object({
-  job_post: z.string().min(50, "Job post must be at least 50 characters"),
+  title: z.string().min(3, "Job title must be at least 3 characters"),
+  summary: z.string().min(50, "Job summary must be at least 50 characters"),
 });
 
 type CheckerForm = z.infer<typeof checkerSchema>;
@@ -324,13 +325,14 @@ function ProposalGenerator() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<GeneratorForm>({
     resolver: zodResolver(generatorSchema),
-    defaultValues: { job_post: "" },
+    defaultValues: { title: "", summary: "" },
   });
 
   async function onSubmit(values: GeneratorForm) {
     setLoading(true);
     try {
-      const { data } = await api.post<GenerateResult>("/generate", values);
+      const job_post = `Title: ${values.title}\n\nSummary:\n${values.summary}`;
+      const { data } = await api.post<GenerateResult>("/generate", { job_post });
       setResult(data);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch (err: unknown) {
@@ -353,13 +355,24 @@ function ProposalGenerator() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Textarea
-                id="g-job_post"
-                rows={14}
-                placeholder="Paste the full job description here and we'll generate a tailored cover letter for you…"
-                {...register("job_post")}
+              <Label htmlFor="g-title">Job title <span className="text-destructive">*</span></Label>
+              <input
+                id="g-title"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                placeholder="e.g. Senior UX/UI Designer"
+                {...register("title")}
               />
-              {errors.job_post && <p className="text-xs text-destructive">{errors.job_post.message}</p>}
+              {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="g-summary">Job summary <span className="text-destructive">*</span></Label>
+              <Textarea
+                id="g-summary"
+                rows={12}
+                placeholder="Paste the full job description here…"
+                {...register("summary")}
+              />
+              {errors.summary && <p className="text-xs text-destructive">{errors.summary.message}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : "Generate cover letter"}
