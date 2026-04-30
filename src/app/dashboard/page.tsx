@@ -53,7 +53,11 @@ interface User {
 // ── validation ────────────────────────────────────────────────────────────────
 
 const checkerSchema = z.object({
-  job_post: z.string().min(50, "Job post must be at least 50 characters"),
+  title: z.string().min(3, "Job title must be at least 3 characters"),
+  summary: z
+    .string()
+    .min(50, "Job summary must be at least 50 characters")
+    .max(15000, "Job summary is too long — please trim to under 15,000 characters"),
   cover_letter: z.string().min(30, "Cover letter must be at least 30 characters"),
   portfolio: z.string().optional(),
 });
@@ -252,15 +256,21 @@ function ProposalChecker() {
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<CheckerForm>({
     resolver: zodResolver(checkerSchema),
-    defaultValues: { job_post: "", cover_letter: "", portfolio: "" },
+    defaultValues: { title: "", summary: "", cover_letter: "", portfolio: "" },
   });
 
   const coverLetterValue = useWatch({ control, name: "cover_letter", defaultValue: "" });
+  const summaryValue = useWatch({ control, name: "summary", defaultValue: "" });
 
   async function onSubmit(values: CheckerForm) {
     setLoading(true);
     try {
-      const { data } = await api.post<ScoreResult>("/score", values);
+      const job_post = `Title: ${values.title}\n\nSummary:\n${values.summary}`;
+      const { data } = await api.post<ScoreResult>("/score", {
+        job_post,
+        cover_letter: values.cover_letter,
+        portfolio: values.portfolio,
+      });
       setResult(data);
       setTimeout(() => scoreRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch (err: unknown) {
@@ -281,9 +291,22 @@ function ProposalChecker() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="c-job_post">Job post <span className="text-destructive">*</span></Label>
-              <Textarea id="c-job_post" rows={8} placeholder="Paste the full job description here…" {...register("job_post")} />
-              {errors.job_post && <p className="text-xs text-destructive">{errors.job_post.message}</p>}
+              <Label htmlFor="c-title">Job title <span className="text-destructive">*</span></Label>
+              <input
+                id="c-title"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                placeholder="e.g. Senior UX/UI Designer"
+                {...register("title")}
+              />
+              {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="c-summary">Job summary <span className="text-destructive">*</span></Label>
+              <Textarea id="c-summary" rows={8} placeholder="Paste the full job description here…" {...register("summary")} />
+              <p className={`text-xs text-right ${wordCount(summaryValue ?? "") > 2000 ? "text-amber-500" : "text-muted-foreground"}`}>
+                {wordCount(summaryValue ?? "")} words
+              </p>
+              {errors.summary && <p className="text-xs text-destructive">{errors.summary.message}</p>}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="c-cover_letter">Your cover letter <span className="text-destructive">*</span></Label>
