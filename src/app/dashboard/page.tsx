@@ -68,6 +68,7 @@ const generatorSchema = z.object({
     .string()
     .min(50, "Job summary must be at least 50 characters")
     .max(15000, "Job summary is too long — please trim to under 15,000 characters"),
+  questions: z.string().optional(),
 });
 
 type CheckerForm = z.infer<typeof checkerSchema>;
@@ -351,7 +352,7 @@ function ProposalGenerator() {
 
   const { register, handleSubmit, control, formState: { errors } } = useForm<GeneratorForm>({
     resolver: zodResolver(generatorSchema),
-    defaultValues: { title: "", summary: "" },
+    defaultValues: { title: "", summary: "", questions: "" },
   });
 
   const summaryValue = useWatch({ control, name: "summary", defaultValue: "" });
@@ -360,7 +361,10 @@ function ProposalGenerator() {
     setLoading(true);
     try {
       const job_post = `Title: ${values.title}\n\nSummary:\n${values.summary}`;
-      const { data } = await api.post<GenerateResult>("/generate", { job_post });
+      const { data } = await api.post<GenerateResult>("/generate", {
+        job_post,
+        questions: values.questions ?? "",
+      });
       setResult(data);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch (err: unknown) {
@@ -404,6 +408,19 @@ function ProposalGenerator() {
                 {wordCount(summaryValue ?? "")} words
               </p>
               {errors.summary && <p className="text-xs text-destructive">{errors.summary.message}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="g-questions">
+                Screening questions{" "}
+                <span className="text-muted-foreground font-normal text-xs">(optional)</span>
+              </Label>
+              <Textarea
+                id="g-questions"
+                rows={4}
+                placeholder={"Paste any questions the client is asking, e.g.:\n• How many years of Figma experience do you have?\n• Have you worked with hospitality products before?"}
+                {...register("questions")}
+              />
+              <p className="text-xs text-muted-foreground">If provided, answers will be included in the generated letter.</p>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : "Generate cover letter"}
