@@ -467,7 +467,7 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <Tabs defaultValue="checker" className="min-h-screen bg-slate-50 flex flex-col">
+    <Tabs defaultValue="generator" className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header with nav */}
       <header className="sticky top-0 z-10 bg-white border-b px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
@@ -477,8 +477,8 @@ export default function DashboardPage() {
 
         {/* Nav links — centre */}
         <TabsList className="hidden sm:flex">
-          <TabsTrigger value="checker">Cover Letter Checker</TabsTrigger>
           <TabsTrigger value="generator">Cover Letter Generator</TabsTrigger>
+          <TabsTrigger value="checker">Cover Letter Checker</TabsTrigger>
         </TabsList>
 
         {/* User + logout */}
@@ -491,18 +491,18 @@ export default function DashboardPage() {
       {/* Mobile nav (shown below header on small screens) */}
       <div className="sm:hidden border-b bg-white px-4 py-2">
         <TabsList className="w-full">
-          <TabsTrigger value="checker" className="flex-1">Checker</TabsTrigger>
           <TabsTrigger value="generator" className="flex-1">Generator</TabsTrigger>
+          <TabsTrigger value="checker" className="flex-1">Checker</TabsTrigger>
         </TabsList>
       </div>
 
       {/* Content */}
       <main className="flex-1 p-4 sm:p-6 max-w-screen-2xl mx-auto w-full">
-        <TabsContent value="checker" className="mt-0">
-          <ProposalChecker />
-        </TabsContent>
         <TabsContent value="generator" className="mt-0">
           <ProposalGenerator />
+        </TabsContent>
+        <TabsContent value="checker" className="mt-0">
+          <ProposalChecker />
         </TabsContent>
       </main>
     </Tabs>
